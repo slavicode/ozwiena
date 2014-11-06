@@ -19,6 +19,8 @@
                  [prismatic/om-tools "0.3.6"]
                  [com.cognitect/transit-cljs "0.8.188"]]
 
+  :min-lein-version "2.5.0"
+
   :uberjar-name "ozwiena.jar"
 
   :plugins [[lein-cljsbuild "1.0.3"]
