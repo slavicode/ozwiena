@@ -1,0 +1,4 @@
+#!/bin/sh
+
+lein pdo cljsbuild once release, sass once
+lein uberjar
