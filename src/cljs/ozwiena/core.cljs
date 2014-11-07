@@ -34,6 +34,12 @@
     (go (let [result (<! query)]
           (om/update! app [:tweets] (aget result "statuses"))))))
 
+(defn handle-enter [e]
+  (when (== (.-which e) 13)
+    (let [event (js/CustomEvent. "blur")]
+      (.dispatchEvent (.-target e) event))
+    (.preventDefault e)))
+
 (defcomponent tweet-image [image owner]
   (render [_]
           (dom/div {:class "image"}
@@ -73,14 +79,16 @@
                       (recur)))))
   (render-state [_ {:keys [update]}]
                 (dom/h1 {:content-editable true
-                         :on-blur #(put! update (aget % "target" "innerHTML"))}
+                         :on-blur #(put! update (aget % "target" "innerHTML"))
+                         :on-key-down handle-enter}
                         (:query app))))
 
 
 (defcomponent ozwiena-app [app owner]
   (will-mount [_]
               (reload-tweets app (:query app))
-              (js/setInterval (fn [] (reload-tweets app (:query @app))) (* (:delay app) 1000)))
+              (js/setInterval (fn [] (reload-tweets app (:query @app)))
+                              (* (:delay app) 1000)))
   (render [_]
           (dom/div
             (om/build query-view app)
