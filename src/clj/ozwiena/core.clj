@@ -35,8 +35,10 @@
                   :content-type "application/x-www-form-urlencoded;charset=UTF-8"
                   :body "grant_type=client_credentials"})))
 
-(def bearer (:access_token (get-bearer (env :twitter-key)
-                                       (env :twitter-secret))))
+(let [key (env :twitter-key)
+      secret (env :twitter-secret)]
+  (def bearer (if (and key secret)
+                (:access_token (get-bearer key secret)))))
 
 (defn- log [msg & vals]
   (let [line (apply format msg vals)]
