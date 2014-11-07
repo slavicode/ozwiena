@@ -3,9 +3,9 @@
     content: ""
     display: table
     clear: both
-%side
-  width: 50%
-  min-width: 400px
+=side($percent)
+  width: (100% * $percent)
+  min-width: ($percent * 800px)
   height: 100%
   float: left
 
@@ -33,7 +33,7 @@ body, html
   min-width: 800px
 
 .info
-  @extend %side
+  +side(.3)
 
   color: #fff
 
@@ -46,7 +46,7 @@ body, html
     bottom: 0
 
 .app
-  @extend %side
+  +side(.7)
 
 .tweet
   @extend %clearfix
