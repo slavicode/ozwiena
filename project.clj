@@ -35,9 +35,23 @@
                    "sass" "auto,"
                    "ring" "server-headless"]}
 
-  :profiles {:uberjar {:env {:production true}
-                       :omit-source true
-                       :aot :all}}
+  :profiles {:dev
+             {:cljsbuild {:builds {:app {:optimizations :none
+                                         :source-map true
+                                         :output-dir "resources/public/js/out"}}}
+              :env {:dev true}}
+             :uberjar
+             {:env {:production true}
+              :omit-source true
+              :aot :all
+              :cljsbuild {:builds {:app
+                                   {:compiler {:optimizations :advanced
+                                               :pretty-print false
+                                               :output-wrapper false
+                                               :preamble ["react/react.min.js"]
+                                               :closure-warnings
+                                               {:externs-validation :off
+                                                :non-standard-jsdoc :off}}}}}}}
 
   :hooks [leiningen.cljsbuild
           leiningen.sass]
@@ -45,24 +59,12 @@
   :ring {:handler ozwiena.core/app
          :init    ozwiena.core/init}
 
-  :source-paths ["src/clj"]
+  :source-paths ["src/clj" "src/cljs"]
 
-  :cljsbuild {:builds [{:source-paths ["src/cljs"]
+  :cljsbuild {:builds {:app
+                       {:source-paths ["src/cljs"]
                         :compiler {:output-to "resources/public/js/ozwiena.js"
-                                   :output-dir "resources/public/js/out"
-                                   :optimizations :none
-                                   :source-map true
-                                   :externs ["react/externs/react.js"]}}
-                       {:id "release"
-                        :source-paths ["src/cljs"]
-                        :compiler {:output-to "resources/public/js/ozwiena.js"
-                                   :source-map "resources/public/js/ozwiena.js.map"
-                                   :optimizations :advanced
-                                   :pretty-print false
-                                   :output-wrapper false
-                                   :preamble ["react/react.min.js"]
-                                   :externs ["react/externs/react.js"]
-                                   :closure-warnings
-                                   {:non-standard-jsdoc :off}}}]}
+                                   :externs ["react/externs/react.js"
+                                             "externs/emojione.js"]}}}}
   :sass {:src "resources/sass"
          :output-directory "resources/public/css"})

@@ -31,7 +31,7 @@
 (defn reload-tweets [app query]
   (let [query (fetch-tweets query)]
     (go (let [result (<! query)]
-          (om/update! app [:tweets] (.-statuses result))))))
+          (om/update! app [:tweets] (aget result "statuses"))))))
 
 (defcomponent tweet-image [image owner]
   (render [_]
@@ -55,14 +55,9 @@
                      (dom/div {:class "content"}
                               (author (aget user "screen_name"))
                               (dom/div {:class "text"
-                                        :dangerously-set-innerHTML #js {:__html (.unicodeToImage js/emojione text)}})
+                                        :dangerously-set-innerHTML #js {:__html (js/emojione.unicodeToImage text)}})
                               (om/build tweet-image
                                         media))))))
-
-(defn query-change [app query]
-  (prn (str "Change: " query))
-  (if (not= (:query @app) query)
-    (om/transact! app :query (fn [] query))))
 
 (defcomponent query-view [app owner]
   (init-state [_]

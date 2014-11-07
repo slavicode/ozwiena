@@ -6,12 +6,17 @@
             [ring.adapter.jetty :as jetty]
             [cheshire.core :as json]
             [clojure.java.io :as io]
-            [clj-http.client :as client])
+            [clj-http.client :as client]
+            [environ.core :refer [env]])
   (:import [java.net URLEncoder])
   (:use [ring.util.response]))
 
+(def root (if (env :dev)
+            "resources/dev/"
+            "resources/public/"))
+
 (defn render [file]
-  (file-response "index.html" {:root "resources/public/"}))
+  (file-response file {:root root}))
 
 (def bearer "AAAAAAAAAAAAAAAAAAAAAE9GbQAAAAAAchwcBFzh89utMKuXX1B9lBS0Pro%3Djg8c8bJchxBvwXa6zvgfPF4jmxnTrXmBE6eWEfzDjawSkZDxWk")
 
