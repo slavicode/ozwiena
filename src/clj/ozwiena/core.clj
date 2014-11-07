@@ -7,7 +7,8 @@
             [cheshire.core :as json]
             [clojure.java.io :as io]
             [clj-http.client :as client]
-            [environ.core :refer [env]])
+            [environ.core :refer [env]]
+            [overtone.at-at :refer [every mk-pool]])
   (:import [java.net URLEncoder])
   (:use [ring.util.response]))
 
@@ -58,5 +59,14 @@
       (handler/api)))
 
 (defn -main []
+  (when (env :ping)
+    (let [addr (env :ping)
+          pool (mk-pool)]
+      (every (* 60 1000)
+             #(try
+                   (log (str "Ping: " addr))
+                   (client/get addr)
+                   (catch Exception e (print e)))
+             pool)))
   (let [port (Integer/parseInt (get (System/getenv) "PORT" "5000"))]
     (jetty/run-jetty app {:port port})))

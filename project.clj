@@ -10,6 +10,7 @@
                  [compojure "1.1.9"]
                  [cheshire "5.3.1"]
                  [clj-http "1.0.1"]
+                 [overtone/at-at "1.2.0"]
                  ;; CLJS
                  [org.clojure/clojurescript "0.0-2322"]
                  [org.clojure/core.async "0.1.338.0-5c5012-alpha"]
@@ -38,7 +39,8 @@
   :profiles {:dev
              {:cljsbuild {:builds {:app
                                    {:compiler {:source-map true}}}}
-              :env {:dev true}}
+              :env {:dev true
+                    :ping "http://localhost:3000"}}
              :uberjar
              {:env {:production true}
               :omit-source true
