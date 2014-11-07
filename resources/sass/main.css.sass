@@ -1,3 +1,5 @@
+$min-width: 600px
+
 %clearfix
   &:after
     content: ""
@@ -5,7 +7,7 @@
     clear: both
 =side($percent)
   width: (100% * $percent)
-  min-width: ($percent * 800px)
+  min-width: ($percent * $min-width)
   height: 100%
   float: left
 
@@ -30,7 +32,7 @@ body, html
   width: 100%
   height: 100%
 
-  min-width: 800px
+  min-width: $min-width
 
 .info
   +side(.3)
@@ -48,10 +50,17 @@ body, html
 .app
   +side(.7)
 
+.tweets
+  @media screen and (min-width: 1000px)
+    -moz-column-count: 2
+    -webkit-column-count: 2
+    column-count: 2
+
 .tweet
   @extend %clearfix
 
   width: 100%
+  display: inline-block
   padding: 1em
 
   color: #000

@@ -92,7 +92,8 @@
   (render [_]
           (dom/div
             (om/build query-view app)
-            (om/build-all tweet-view (:tweets app)))))
+            (dom/div {:class "tweets"}
+                     (om/build-all tweet-view (:tweets app))))))
 
 (om/root ozwiena-app
          app-state
