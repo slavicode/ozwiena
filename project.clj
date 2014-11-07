@@ -40,7 +40,8 @@
              {:cljsbuild {:builds {:app
                                    {:compiler {:source-map true}}}}
               :env {:dev true
-                    :ping "http://localhost:3000"}}
+                    :twitter-key "TcqDkElM3wuSDC8MSxw08yGlF"
+                    :twitter-secret "Lrtf84251KtoiLmEWPQL7OqN5W8F8ZLjw5IY9UkZWqToNZ5iIK"}}
              :uberjar
              {:env {:production true}
               :omit-source true

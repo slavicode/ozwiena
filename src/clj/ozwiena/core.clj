@@ -6,10 +6,12 @@
             [ring.adapter.jetty :as jetty]
             [cheshire.core :as json]
             [clojure.java.io :as io]
+            [clojure.string :refer [join]]
             [clj-http.client :as client]
             [environ.core :refer [env]]
             [overtone.at-at :refer [every mk-pool]])
-  (:import [java.net URLEncoder])
+  (:import [java.net URLEncoder]
+           [java.util Base64])
   (:use [ring.util.response]))
 
 (def root (if (env :dev)
@@ -19,7 +21,22 @@
 (defn render [file]
   (file-response file {:root root}))
 
-(def bearer "AAAAAAAAAAAAAAAAAAAAAE9GbQAAAAAAchwcBFzh89utMKuXX1B9lBS0Pro%3Djg8c8bJchxBvwXa6zvgfPF4jmxnTrXmBE6eWEfzDjawSkZDxWk")
+(defn base64 [data]
+  (-> Base64
+      (. getEncoder)
+      (.encode (.getBytes data))
+      String.))
+
+(defn get-bearer [key secret]
+  (let [auth (base64 (str key ":" secret))]
+    (prn auth)
+    (client/post "https://api.twitter.com/oauth2/token"
+                 {:headers {"Authorization" (str "Basic " auth)}
+                  :content-type "application/x-www-form-urlencoded;charset=UTF-8"
+                  :body "grant_type=client_credentials"})))
+
+(def bearer (:access_token (get-bearer (env :twitter-key)
+                                       (env :twitter-secret))))
 
 (defn- log [msg & vals]
   (let [line (apply format msg vals)]
@@ -66,9 +83,9 @@
           pool (mk-pool)]
       (every (* 60 1000)
              #(try
-                   (log (str "Ping: " addr))
-                   (client/get addr)
-                   (catch Exception e (print e)))
+                (log (str "Ping: " addr))
+                (client/get addr)
+                (catch Exception e (print e)))
              pool)))
   (let [port (Integer/parseInt (get (System/getenv) "PORT" "5000"))]
     (jetty/run-jetty app {:port port})))
