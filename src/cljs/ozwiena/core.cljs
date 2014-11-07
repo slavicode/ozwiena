@@ -7,8 +7,7 @@
             [om-tools.dom :as dom :include-macros true]
             [om-tools.core :refer-macros [defcomponent]]
             [cljs-http.client :as http]
-            [goog.net.XhrIo :as xhr]
-            [ozwiena.utils :refer [guid]]))
+            [goog.net.XhrIo :as xhr]))
 
 ;; Lets you do (prn "stuff") to the console
 (enable-console-print!)
@@ -77,18 +76,16 @@
                         (reload-tweets app value))))))
   (render-state [_ {:keys [update]}]
                 (dom/h1 {:content-editable true
-                         :on-blur #(put! update (.. % -target -innerHTML))}
+                         :on-blur #(put! update (aget % "target" "innerHTML"))}
                         (:query app))))
 
 
 (defcomponent ozwiena-app [app owner]
   (will-mount [_]
               (reload-tweets app (:query app))
-              (js/setInterval (fn [] (reload-tweets app (:query @app))) (* 10 1000)))
+              (js/setInterval (fn [] (reload-tweets app (:query @app))) (* 30 1000)))
   (render [_]
           (dom/div
-            ; (dom/h1 {:content-editable true
-            ;          :on-change #(query-change app (.. % -target -value))} (:query app))
             (om/build query-view app)
             (om/build-all tweet-view (:tweets app)))))
 

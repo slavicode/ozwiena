@@ -19,8 +19,9 @@
                  [prismatic/om-tools "0.3.6"]
                  [com.cognitect/transit-cljs "0.8.188"]]
 
-  :min-lein-version "2.5.0"
+  :min-lein-version "2.0.0"
 
+  :main ozwiena.core
   :uberjar-name "ozwiena.jar"
 
   :plugins [[lein-cljsbuild "1.0.3"]
@@ -32,15 +33,14 @@
   :aliases {"dev" ["pdo"
                    "cljsbuild" "auto" "dev,"
                    "sass" "auto,"
-                   "ring" "server-headless"]
-            "uberjar" ["do"
-                       "cljsbuild" "once" "release,"
-                       "sass" "once,"
-                       "uberjar"]}
+                   "ring" "server-headless"]}
 
   :profiles {:uberjar {:env {:production true}
                        :omit-source true
                        :aot :all}}
+
+  :hooks [leiningen.cljsbuild
+          leiningen.sass]
 
   :ring {:handler ozwiena.core/app
          :init    ozwiena.core/init}
@@ -59,7 +59,7 @@
                         :compiler {:output-to "resources/public/js/ozwiena.js"
                                    :source-map "resources/public/js/ozwiena.js.map"
                                    :output-dir "resources/public/js"
-                                   :optimizations :advanced
+                                   :optimizations :whitespace
                                    :pretty-print false
                                    :output-wrapper false
                                    :preamble ["react/react.min.js"]

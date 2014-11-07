@@ -1,4 +1,0 @@
-#!/bin/sh
-
-lein upgrade
-lein uberjar
