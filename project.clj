@@ -49,7 +49,9 @@
                                    {:compiler {:optimizations :advanced
                                                :pretty-print false
                                                :output-wrapper false
-                                               :preamble ["react/react.min.js"]
+                                               :preamble ["react/react.min.js"
+                                                          "moment.min.js"
+                                                          "emojione.min.js"]
                                                :closure-warnings
                                                {:externs-validation :off
                                                 :non-standard-jsdoc :off}}}}}}}
@@ -60,13 +62,14 @@
   :ring {:handler ozwiena.core/app
          :init    ozwiena.core/init}
 
-  :source-paths ["src/clj" "src/cljs"]
+  :source-paths ["src/clj" "src/cljs" "externs/"]
 
   :cljsbuild {:builds {:app
                        {:source-paths ["src/cljs"]
                         :compiler {:output-to "resources/public/js/ozwiena.js"
                                    :externs ["react/externs/react.js"
-                                             "externs/emojione.js"]
+                                             "externs/emojione.js"
+                                             "externs/moment.js"]
                                    :optimizations :none
                                    :output-dir "resources/public/js/out"}}}}
   :sass {:src "resources/sass"

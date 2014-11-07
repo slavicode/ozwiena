@@ -1,10 +1,19 @@
-$min-width: 600px
+// colors: http://coolors.co/080904-8d0313-5b5b27-3d8949-019678
+
+$primary: #080904
+$secondary: #019678
+
+$tweet-links: #019678
+$tweet-shadowed: #5B5B27
+
+$min-width: 800px
 
 %clearfix
   &:after
     content: ""
     display: table
     clear: both
+
 =side($percent)
   width: (100% * $percent)
   min-width: ($percent * $min-width)
@@ -13,7 +22,7 @@ $min-width: 600px
 
   overflow: auto
 
-  padding: 1.5em
+  padding: 1em
 
 body, html
   height: 100%
@@ -27,7 +36,7 @@ body, html
 *
   box-sizing: border-box
 
-.container
+.app, .wrapper
   @extend %clearfix
   width: 100%
   height: 100%
@@ -35,38 +44,41 @@ body, html
   min-width: $min-width
 
 .info
-  +side(.3)
+  +side(.35)
 
-  color: #fff
+  color: $secondary
 
-  background: url('/img/background.jpg') no-repeat center center
+  background: $primary no-repeat center center
 
   a
-    color: #fff
+    color: $secondary
   .copyrights
     position: absolute
-    bottom: 0
-
-.app
-  +side(.7)
+    bottom: 1em
 
 .tweets
-  @media screen and (min-width: 1000px)
-    -moz-column-count: 2
-    -webkit-column-count: 2
-    column-count: 2
+  +side(.65)
+
+  background: #fff
+  color: $primary
 
 .tweet
   @extend %clearfix
 
   width: 100%
+  max-width: 500px
   display: inline-block
   padding: 1em
 
   color: #000
 
+  border-bottom: 1px solid rgba($tweet-shadowed, .2)
+  &:last-of-type
+    border: none
+
   a
-    color: #000
+    color: $tweet-links
+    text-decoration: none
 
   .avatar
     float: left
@@ -78,12 +90,20 @@ body, html
     float: left
     width: 80%
     padding-left: .25em
-  .author
+  .metadata
     padding: 0 .5em
+
+    .author, .created
+      display: inline-block
+
+    .created
+      margin-left: 1em
+      color: $tweet-shadowed
   .text
-    padding: .5em
+    padding: 0 .5em
   .image img
     width: 100%
+    margin-top: .5em
     border-radius: .5em
 
 .emojione

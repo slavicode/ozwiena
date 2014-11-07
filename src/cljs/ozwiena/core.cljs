@@ -40,6 +40,9 @@
       (.dispatchEvent (.-target e) event))
     (.preventDefault e)))
 
+(defn parse-time [string]
+  (js/moment string "... MMM DD hh:mm:ss Z YYYY"))
+
 (defcomponent tweet-image [image owner]
   (render [_]
           (dom/div {:class "image"}
@@ -54,19 +57,28 @@
 (defcomponent tweet-view [tweet owner]
   (render [_]
           (let [user (aget tweet "user")
+                created (parse-time (aget tweet "created_at"))
                 text (aget tweet "text")
                 media (aget tweet "entities" "media")]
             (dom/div {:class "tweet"}
                      (dom/div {:class "avatar"}
                               (dom/img {:src (aget user "profile_image_url_https")}))
                      (dom/div {:class "content"}
-                              (author (aget user "screen_name"))
+                              (dom/div {:class "metadata"}
+                                       (author (aget user "screen_name"))
+                                       (dom/div {:class "created"}
+                                                (.fromNow created)))
                               (dom/div {:class "text"
                                         :dangerously-set-innerHTML #js {:__html (js/emojione.unicodeToImage text)}})
                               (om/build tweet-image
                                         media))))))
 
-(defcomponent query-view [app owner]
+(defcomponent tweets [app owner]
+  (render [_]
+          (dom/div {:class "tweets"}
+                   (om/build-all tweet-view (:tweets app)))))
+
+(defcomponent info [app owner]
   (init-state [_]
               {:update (chan)})
   (will-mount [_]
@@ -78,23 +90,27 @@
                         (reload-tweets app value))
                       (recur)))))
   (render-state [_ {:keys [update]}]
-                (dom/h1 {:content-editable true
-                         :on-blur #(put! update (aget % "target" "innerHTML"))
-                         :on-key-down handle-enter}
-                        (:query app))))
+                (dom/div {:class "info"}
+                         (dom/h1 {:content-editable true
+                                  :on-blur #(put! update (aget % "target" "innerHTML"))
+                                  :on-key-down handle-enter}
+                                 (:query app))
+                         (dom/div {:class "copyrights"}
+                                  "Copyrights 2014 © by "
+                                  (dom/a {:href "https://github.com/slavicode"}
+                                         "SlaviCode")))))
 
 
-(defcomponent ozwiena-app [app owner]
+(defcomponent ozwiena [app owner]
   (will-mount [_]
               (reload-tweets app (:query app))
               (js/setInterval (fn [] (reload-tweets app (:query @app)))
                               (* (:delay app) 1000)))
   (render [_]
-          (dom/div
-            (om/build query-view app)
-            (dom/div {:class "tweets"}
-                     (om/build-all tweet-view (:tweets app))))))
+          (dom/div {:class "app"}
+                   (om/build info app)
+                   (om/build tweets app))))
 
-(om/root ozwiena-app
+(om/root ozwiena
          app-state
          {:target (.getElementById js/document "app")})
