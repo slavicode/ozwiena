@@ -32,10 +32,11 @@
   :aliases {"dev" ["pdo"
                    "cljsbuild" "auto" "dev,"
                    "sass" "auto,"
-                   "ring" "server-headless"]}
-
-  :hook [leiningen.cljsbuild
-         leiningen.sass]
+                   "ring" "server-headless"]
+            "uberjar" ["do"
+                       "cljsbuild" "once" "release,"
+                       "sass" "once,"
+                       "uberjar"]}
 
   :profiles {:uberjar {:env {:production true}
                        :omit-source true
@@ -46,15 +47,15 @@
 
   :source-paths ["src/clj"]
 
-  :cljsbuild {:builds [{:id "dev"
-                        :source-paths ["src/cljs"]
+  :cljsbuild {:builds {:dev
+                       {:source-paths ["src/cljs"]
                         :compiler {:output-to "resources/public/js/ozwiena.js"
                                    :output-dir "resources/public/js/out"
                                    :optimizations :none
                                    :source-map true
                                    :externs ["react/externs/react.js"]}}
-                       {:id "release"
-                        :source-paths ["src/cljs"]
+                       :release
+                       {:source-paths ["src/cljs"]
                         :compiler {:output-to "resources/public/js/ozwiena.js"
                                    :source-map "resources/public/js/ozwiena.js.map"
                                    :output-dir "resources/public/js"
@@ -64,6 +65,6 @@
                                    :preamble ["react/react.min.js"]
                                    :externs ["react/externs/react.js"]
                                    :closure-warnings
-                                   {:non-standard-jsdoc :off}}}]}
+                                   {:non-standard-jsdoc :off}}}}}
   :sass {:src "resources/sass"
          :output-directory "resources/public/css"})

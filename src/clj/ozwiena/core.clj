@@ -3,6 +3,7 @@
             [compojure.route :as route]
             [compojure.core :refer [GET POST defroutes]]
             [ring.util.codec :refer [url-encode]]
+            [ring.adapter.jetty :as jetty]
             [cheshire.core :as json]
             [clojure.java.io :as io]
             [clj-http.client :as client])
@@ -46,6 +47,11 @@
   (route/resources "/")
   (route/not-found "Page not found"))
 
+
 (def app
   (-> #'app-routes
       (handler/api)))
+
+(defn -main []
+  (let [port (Integer/parseInt (get (System/getenv) "PORT" "5000"))]
+    (jetty/run-jetty app {:port port})))
