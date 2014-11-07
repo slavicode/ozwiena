@@ -47,24 +47,22 @@
 
   :source-paths ["src/clj"]
 
-  :cljsbuild {:builds {:dev
-                       {:source-paths ["src/cljs"]
+  :cljsbuild {:builds [{:source-paths ["src/cljs"]
                         :compiler {:output-to "resources/public/js/ozwiena.js"
                                    :output-dir "resources/public/js/out"
                                    :optimizations :none
                                    :source-map true
                                    :externs ["react/externs/react.js"]}}
-                       :release
-                       {:source-paths ["src/cljs"]
+                       {:id "release"
+                        :source-paths ["src/cljs"]
                         :compiler {:output-to "resources/public/js/ozwiena.js"
                                    :source-map "resources/public/js/ozwiena.js.map"
-                                   :output-dir "resources/public/js"
-                                   :optimizations :whitespace
+                                   :optimizations :advanced
                                    :pretty-print false
                                    :output-wrapper false
                                    :preamble ["react/react.min.js"]
                                    :externs ["react/externs/react.js"]
                                    :closure-warnings
-                                   {:non-standard-jsdoc :off}}}}}
+                                   {:non-standard-jsdoc :off}}}]}
   :sass {:src "resources/sass"
          :output-directory "resources/public/css"})

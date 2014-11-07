@@ -54,8 +54,8 @@
                               (dom/img {:src (aget user "profile_image_url_https")}))
                      (dom/div {:class "content"}
                               (author (aget user "screen_name"))
-                              (dom/div {:class "text"}
-                                       text)
+                              (dom/div {:class "text"
+                                        :dangerously-set-innerHTML #js {:__html (.unicodeToImage js/emojione text)}})
                               (om/build tweet-image
                                         media))))))
 
@@ -73,7 +73,8 @@
                       (let [value (<! update)]
                         (prn (str "Search for " value))
                         (om/transact! app :query (fn [] value))
-                        (reload-tweets app value))))))
+                        (reload-tweets app value))
+                      (recur)))))
   (render-state [_ {:keys [update]}]
                 (dom/h1 {:content-editable true
                          :on-blur #(put! update (aget % "target" "innerHTML"))}
@@ -83,7 +84,7 @@
 (defcomponent ozwiena-app [app owner]
   (will-mount [_]
               (reload-tweets app (:query app))
-              (js/setInterval (fn [] (reload-tweets app (:query @app))) (* 30 1000)))
+              (js/setInterval (fn [] (reload-tweets app (:query @app))) (* 60 1000)))
   (render [_]
           (dom/div
             (om/build query-view app)
