@@ -29,15 +29,14 @@
 
 (defn get-bearer [key secret]
   (let [auth (base64 (str key ":" secret))]
-    (prn auth)
     (client/post "https://api.twitter.com/oauth2/token"
                  {:headers {"Authorization" (str "Basic " auth)}
                   :content-type "application/x-www-form-urlencoded;charset=UTF-8"
                   :body "grant_type=client_credentials"})))
 
-(let [key (env :twitter-key)
-      secret (env :twitter-secret)]
-  (def bearer (if (and key secret)
+(def bearer (let [key (env :twitter-key)
+                  secret (env :twitter-secret)]
+              (if (and key secret)
                 (:access_token (get-bearer key secret)))))
 
 (defn- log [msg & vals]
@@ -52,6 +51,7 @@
 (defn twitter-search [query]
   (let [url (str "https://api.twitter.com/1.1/search/tweets.json?"
                  (encode-params query))]
+    (prn bearer)
     (client/get url
                 {:headers {"Authorization" (str "Bearer " bearer)}
                  :as :json})))
