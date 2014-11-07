@@ -50,6 +50,8 @@
                                    (catch Exception e (-> (response (str e))
                                                           (status 500)))))
 
+  (GET "/ping" [] (str "Pong!"))
+
   (route/resources "/")
   (route/not-found "Page not found"))
 
