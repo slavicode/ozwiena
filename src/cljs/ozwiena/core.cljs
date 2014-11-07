@@ -14,7 +14,8 @@
 
 (def app-state
   (atom {:query "#oźwiena"
-         :tweets []}))
+         :tweets []
+         :delay 15}))
 
 (defn uri [uri params]
   (let [encode js/encodeURIComponent
@@ -79,7 +80,7 @@
 (defcomponent ozwiena-app [app owner]
   (will-mount [_]
               (reload-tweets app (:query app))
-              (js/setInterval (fn [] (reload-tweets app (:query @app))) (* 60 1000)))
+              (js/setInterval (fn [] (reload-tweets app (:query @app))) (* (:delay app) 1000)))
   (render [_]
           (dom/div
             (om/build query-view app)

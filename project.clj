@@ -31,14 +31,13 @@
             [lein-environ "1.0.0"]]
 
   :aliases {"dev" ["pdo"
-                   "cljsbuild" "auto" "dev,"
+                   "cljsbuild" "auto" "app,"
                    "sass" "auto,"
                    "ring" "server-headless"]}
 
   :profiles {:dev
-             {:cljsbuild {:builds {:app {:optimizations :none
-                                         :source-map true
-                                         :output-dir "resources/public/js/out"}}}
+             {:cljsbuild {:builds {:app
+                                   {:compiler {:source-map true}}}}
               :env {:dev true}}
              :uberjar
              {:env {:production true}
@@ -65,6 +64,8 @@
                        {:source-paths ["src/cljs"]
                         :compiler {:output-to "resources/public/js/ozwiena.js"
                                    :externs ["react/externs/react.js"
-                                             "externs/emojione.js"]}}}}
+                                             "externs/emojione.js"]
+                                   :optimizations :none
+                                   :output-dir "resources/public/js/out"}}}}
   :sass {:src "resources/sass"
          :output-directory "resources/public/css"})
