@@ -13,7 +13,12 @@
 (enable-console-print!)
 
 (def app-state
-  (atom {:query "#oźwiena"
+  (atom {:query (let [hash js/window.location.hash]
+                  (if (empty? hash)
+                    "#oźwiena"
+                    (-> hash
+                        js/decodeURIComponent
+                        rest)))
          :tweets []
          :delay 15}))
 
@@ -85,9 +90,9 @@
               (let [update (om/get-state owner :update)]
                 (go (loop []
                       (let [value (<! update)]
-                        (prn (str "Search for " value))
                         (om/transact! app :query (fn [] value))
-                        (reload-tweets app value))
+                        (reload-tweets app value)
+                        (set! js/window.location.hash (js/encodeURIComponent value)))
                       (recur)))))
   (render-state [_ {:keys [update]}]
                 (dom/div {:class "info"}
@@ -99,7 +104,6 @@
                                   "Copyrights 2014 © by "
                                   (dom/a {:href "https://github.com/slavicode"}
                                          "SlaviCode")))))
-
 
 (defcomponent ozwiena [app owner]
   (will-mount [_]
