@@ -1,7 +1,7 @@
 (ns ozwiena.core
   (:require-macros [cljs.core.async.macros :refer [go alt!]])
   (:require [goog.events :as events]
-            [clojure.string :refer [join]]
+            [clojure.string :refer [join blank?]]
             [cljs.core.async :refer [put! <! >! chan timeout]]
             [om.core :as om :include-macros true]
             [om-tools.dom :as dom :include-macros true]
@@ -13,12 +13,11 @@
 (enable-console-print!)
 
 (def app-state
-  (atom {:query (let [hash js/window.location.hash]
-                  (if (empty? hash)
+  (atom {:query (let [hash (-> (join "" (rest js/window.location.hash))
+                               js/decodeURIComponent)]
+                  (if (blank? hash)
                     "#oźwiena"
-                    (-> hash
-                        js/decodeURIComponent
-                        rest)))
+                    hash))
          :tweets []
          :delay 15}))
 
