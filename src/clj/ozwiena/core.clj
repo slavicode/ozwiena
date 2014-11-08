@@ -29,15 +29,15 @@
 
 (defn get-bearer [key secret]
   (let [auth (base64 (str key ":" secret))]
-    (client/post "https://api.twitter.com/oauth2/token"
-                 {:headers {"Authorization" (str "Basic " auth)}
-                  :content-type "application/x-www-form-urlencoded;charset=UTF-8"
-                  :body "grant_type=client_credentials"})))
+    (-> (client/post "https://api.twitter.com/oauth2/token"
+                     {:headers {"Authorization" (str "Basic " auth)}
+                      :content-type "application/x-www-form-urlencoded;charset=UTF-8"
+                      :body "grant_type=client_credentials"})
+        :body
+        (json/parse-string true)
+        :access_token)))
 
-(def bearer (let [key (env :twitter-key)
-                  secret (env :twitter-secret)]
-              (if (and key secret)
-                (:access_token (get-bearer key secret)))))
+(def bearer (atom ""))
 
 (defn- log [msg & vals]
   (let [line (apply format msg vals)]
@@ -50,10 +50,13 @@
 
 (defn twitter-search [query]
   (let [url (str "https://api.twitter.com/1.1/search/tweets.json?"
-                 (encode-params query))]
-    (prn bearer)
+                 (encode-params query))
+        key (env :twitter-key)
+        secret (env :twitter-secret)]
+    (if (empty? @bearer)
+      (swap! bearer (fn [_ e] e) (get-bearer key secret)))
     (client/get url
-                {:headers {"Authorization" (str "Bearer " bearer)}
+                {:headers {"Authorization" (str "Bearer " @bearer)}
                  :as :json})))
 
 (defn json-response [data]
